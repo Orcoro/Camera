@@ -2,6 +2,7 @@ using UnityEngine;
 
 public abstract class AView : MonoBehaviour
 {
+    [Min(0.01f)]
     public float Weight;
     public bool IsActiveOnStart;
 

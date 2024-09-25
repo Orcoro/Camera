@@ -11,10 +11,13 @@ public class FixedView : AView
 
     public override CameraConfiguration GetConfiguration()
     {
+        _rotation = transform.eulerAngles;
         return new CameraConfiguration
         {
             Position = transform.position,
+            Rotation = _rotation,
             Offset = Vector3.zero,
+            FieldOfView = FieldOfView
         };
     }
 }

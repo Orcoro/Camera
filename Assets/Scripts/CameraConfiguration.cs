@@ -35,7 +35,7 @@ public struct CameraConfiguration
         Gizmos.DrawSphere(Position, 0.25f);
         Vector3 position = GetPosition();
         Gizmos.DrawLine(Position, position);
-        Gizmos.matrix = Matrix4x4.TRS(position, GetRotation(), Vector3.one);
+        Gizmos.matrix = Matrix4x4.TRS(position, GetRotation(), new Vector3(10, 10, 10));
         Gizmos.DrawFrustum(Vector3.zero, FieldOfView, 0.5f, 0f, Camera.main.aspect);
         Gizmos.matrix = Matrix4x4.identity;
     }

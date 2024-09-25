@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController Instance;
     public Camera Camera;
-    private CameraConfiguration _configuration;
+    [SerializeField] private CameraConfiguration _configuration;
     private List<AView> _activeViews = new List<AView>();
 
     private void Awake()
@@ -26,7 +26,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        _configuration.DrawGizmos(Color.green);
+        _configuration = ComputeAverage();
+        ApplyConfiguration();
     }
 
     private void ApplyConfiguration()
@@ -68,12 +69,22 @@ public class CameraController : MonoBehaviour
     public void AddView(AView view)
     {
         _activeViews.Add(view);
-        _configuration = ComputeAverage();
     }
 
     public void RemoveView(AView view)
     {
         _activeViews.Remove(view);
-        _configuration = ComputeAverage();
+    }
+
+    private void OnDrawGizmos()
+    {
+        _configuration.DrawGizmos(Color.red);
+        for (int i = 0; i < _activeViews.Count; i++) {
+            CameraConfiguration configuration = _activeViews[i].GetConfiguration();
+            configuration.DrawGizmos(Color.green);
+            // Draw a line between the camera and the view
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(_configuration.GetPosition(), configuration.GetPosition());
+        }
     }
 }
