@@ -62,4 +62,16 @@ public class Rail : MonoBehaviour
         }
         return Vector3.zero;
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        for (int i = 0; i < _nodes.Count; i++) {
+            Transform node = _nodes[i];
+            if (i == _nodes.Count - 1) {
+                break;
+            }
+            Gizmos.DrawLine(node.position, _nodes[i + 1].position);
+        }
+    }
 }
