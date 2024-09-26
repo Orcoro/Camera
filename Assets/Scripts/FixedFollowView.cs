@@ -15,11 +15,11 @@ public class FixedFollowView : AView
 
     public override CameraConfiguration GetConfiguration()
     {
-        CentralPoint = transform.position - Target.transform.position;
+        CentralPoint = Target.transform.position - transform.position;
         _rotation = transform.eulerAngles;
         Vector3 direction = CentralPoint.normalized;
         float distance = CentralPoint.magnitude;
-        float pitch = Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+        float pitch = -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
         float yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
         // pitch = Mathf.Clamp(pitch, -_pitchOffsetMax, _pitchOffsetMax);
         // yaw = Mathf.Clamp(yaw, -_yawOffsetMax, _yawOffsetMax);
