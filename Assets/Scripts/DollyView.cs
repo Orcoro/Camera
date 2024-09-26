@@ -15,13 +15,13 @@ public class DollyView : AView
     public override CameraConfiguration GetConfiguration()
     {
         _rotation = transform.eulerAngles;
-        Vector3 position = Rail.GetPosition(Distance);
-        Vector3 direction = position - Target.transform.position;
-        Quaternion rotation = Quaternion.LookRotation(direction);
-        _rotation = rotation.eulerAngles;
+        Vector3 direction = (Target.transform.position - transform.position).normalized;
+        float pitch = -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+        float yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        _rotation = new Vector3(pitch, yaw, 0f);
         return new CameraConfiguration
         {
-            Position = position,
+            Position = transform.position,
             Rotation = _rotation,
             Offset = Vector3.zero,
             FieldOfView = FieldOfView
