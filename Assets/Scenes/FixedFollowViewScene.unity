@@ -531,6 +531,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FixedFollowView
       objectReference: {fileID: 0}
+    - target: {fileID: 7346966796355022052, guid: 3417e331fb189964c9a031b7c376baa2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7346966796355022052, guid: 3417e331fb189964c9a031b7c376baa2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

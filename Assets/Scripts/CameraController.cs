@@ -8,7 +8,9 @@ public class CameraController : MonoBehaviour
     public static CameraController Instance;
     public Camera Camera;
     [SerializeField] private CameraConfiguration _configuration;
+    private CameraConfiguration _targetConfiguration;
     private List<AView> _activeViews = new List<AView>();
+    private float _speed = 1f;
 
     private void Awake()
     {
@@ -26,8 +28,16 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        _configuration = ComputeAverage();
-        ApplyConfiguration();
+        SmoothCamera();
+    }
+
+    private void SmoothCamera()
+    {
+        _targetConfiguration = ComputeAverage();
+        Camera.transform.position = Vector3.Lerp(Camera.transform.position, _targetConfiguration.GetPosition(), _speed * Time.deltaTime);
+        Camera.transform.rotation = Quaternion.Slerp(Camera.transform.rotation, _targetConfiguration.GetRotation(), _speed * Time.deltaTime);
+        Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, _targetConfiguration.FieldOfView, _speed * Time.deltaTime);
+        _configuration = _targetConfiguration;
     }
 
     private void ApplyConfiguration()
@@ -69,11 +79,15 @@ public class CameraController : MonoBehaviour
     public void AddView(AView view)
     {
         _activeViews.Add(view);
+        _configuration = ComputeAverage();
+        _targetConfiguration = ComputeAverage();
     }
 
     public void RemoveView(AView view)
     {
         _activeViews.Remove(view);
+        _configuration = ComputeAverage();
+        _targetConfiguration = ComputeAverage();
     }
 
     private void OnDrawGizmos()

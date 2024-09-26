@@ -7,7 +7,8 @@ public class FixedFollowView : AView
     private Vector3 _rotation;
     public float FieldOfView;
     public GameObject Target;
-    public Vector3 CentralPoint;
+    public GameObject CentralPoint;
+    public bool _clamped = true;
 
     private float Pitch { get => _rotation.x; set => _rotation.x = value; }
     private float Yaw { get => _rotation.y; set => _rotation.y = value; }
@@ -15,14 +16,23 @@ public class FixedFollowView : AView
 
     public override CameraConfiguration GetConfiguration()
     {
-        CentralPoint = Target.transform.position - transform.position;
         _rotation = transform.eulerAngles;
-        Vector3 direction = CentralPoint.normalized;
-        float distance = CentralPoint.magnitude;
+        Vector3 direction = (Target.transform.position - transform.position).normalized;
         float pitch = -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
         float yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        // pitch = Mathf.Clamp(pitch, -_pitchOffsetMax, _pitchOffsetMax);
-        // yaw = Mathf.Clamp(yaw, -_yawOffsetMax, _yawOffsetMax);
+        if (_clamped)
+        {
+            Vector3 directionToCentralPoint = (CentralPoint.transform.position - transform.position).normalized;
+            float pitchToCentralPoint = -Mathf.Asin(directionToCentralPoint.y) * Mathf.Rad2Deg;
+            float yawToCentralPoint = Mathf.Atan2(directionToCentralPoint.x, directionToCentralPoint.z) * Mathf.Rad2Deg;
+            float pitchOffset = pitch - pitchToCentralPoint;
+            float yawOffset = yaw - yawToCentralPoint;
+            pitchOffset = Mathf.Clamp(pitchOffset, -_pitchOffsetMax, _pitchOffsetMax);
+            pitch = pitchToCentralPoint + pitchOffset;
+            yawOffset = (yawOffset > 180f) ? yawOffset - 360f : (yawOffset < -180f) ? yawOffset + 360f : yawOffset;
+            yawOffset = Mathf.Clamp(yawOffset, -_yawOffsetMax, _yawOffsetMax);
+            yaw = yawOffset + yawToCentralPoint;
+        }
         _rotation = new Vector3(pitch, yaw, 0f);
         return new CameraConfiguration
         {
