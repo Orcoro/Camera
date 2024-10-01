@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private const float _computeTimer = 10f;
+    private float _timer = 0f;
     public static CameraController Instance;
     public Camera Camera;
     [SerializeField] private CameraConfiguration _configuration;
@@ -28,12 +30,20 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        SmoothCamera();
+        _targetConfiguration = ComputeAverage();
+        if (_timer >= _computeTimer && _targetConfiguration.IsEqual(_configuration)) {
+            _timer = 0f;
+            ApplyConfiguration();
+        } else if (!_targetConfiguration.IsEqual(_configuration)) {
+            _timer = 0f;
+            SmoothCamera();
+        } else
+            SmoothCamera();
     }
 
     private void SmoothCamera()
     {
-        _targetConfiguration = ComputeAverage();
+        _timer += Time.deltaTime;
         Camera.transform.position = Vector3.Lerp(Camera.transform.position, _targetConfiguration.GetPosition(), _speed * Time.deltaTime);
         Camera.transform.rotation = Quaternion.Slerp(Camera.transform.rotation, _targetConfiguration.GetRotation(), _speed * Time.deltaTime);
         Camera.fieldOfView = Mathf.Lerp(Camera.fieldOfView, _targetConfiguration.FieldOfView, _speed * Time.deltaTime);

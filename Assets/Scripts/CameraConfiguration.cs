@@ -41,4 +41,12 @@ public struct CameraConfiguration
         Gizmos.DrawFrustum(Vector3.zero, FieldOfView, 0.5f, 0f, Camera.main.aspect);
         Gizmos.matrix = Matrix4x4.identity;
     }
+
+    public bool IsEqual(CameraConfiguration lhs)
+    {
+        return lhs.Position == this.Position &&
+               lhs.Offset == this.Offset &&
+               lhs.FieldOfView == this.FieldOfView &&
+               lhs.Rotation == this.Rotation;
+    }
 }

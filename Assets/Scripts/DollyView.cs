@@ -8,9 +8,20 @@ public class DollyView : AView
     public GameObject Target;
     public Rail Rail;
     public float Speed;
+    public bool IsAuto = false;
 
     public float Roll { get => _rotation.z; set => _rotation.z = value; }
     public float DistanceOnRail => Rail.GetDistanceOnRail(Target.transform.position);
+
+    protected override void Init()
+    {
+        if (Rail != null) {
+            Distance = DistanceOnRail;
+            if (Rail.DollyView == null) {
+                Rail.DollyView = this;
+            }
+        }
+    }
 
     public override CameraConfiguration GetConfiguration()
     {
