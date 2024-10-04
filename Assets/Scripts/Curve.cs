@@ -6,10 +6,22 @@ using UnityEngine;
 [System.Serializable]
 public class Curve
 {
+    private List<Vector3> _points = new List<Vector3>();
     private Vector3 _a;
     private Vector3 _b;
     private Vector3 _c;
     private Vector3 _d;
+
+    public void AddPoint(Vector3 point)
+    {
+        _points.Add(point);
+        if (_points.Count == 4) {
+            _a = _points[0];
+            _b = _points[1];
+            _c = _points[2];
+            _d = _points[3];
+        }
+    }
 
     public Vector3 GetPosition(float t)
     {

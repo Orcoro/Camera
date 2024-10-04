@@ -91,7 +91,6 @@ public class Rail : MonoBehaviour
                 totalDistance = distanceA + distanceB;
                 index = i;
                 _targetedIndex = i;
-                Debug.Log(index);
             }
         }
         Vector3 point = MathUtils.GetNearestPointOnSegment(_nodes[index].position, _nodes[(index + 1) % _nodes.Count].position, _dollyView.Target.transform.position);
