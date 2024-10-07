@@ -6,22 +6,13 @@ using UnityEngine;
 [System.Serializable]
 public class Curve
 {
-    private List<Vector3> _points = new List<Vector3>();
     [SerializeField] private Vector3 _a;
     [SerializeField] private Vector3 _b;
     [SerializeField] private Vector3 _c;
     [SerializeField] private Vector3 _d;
+    private float _angle = 0f;
 
-    public void AddPoint(Vector3 point)
-    {
-        _points.Add(point);
-        if (_points.Count == 4) {
-            _a = _points[0];
-            _b = _points[1];
-            _c = _points[2];
-            _d = _points[3];
-        }
-    }
+    public float Angle { get => _angle; set => _angle = value; }
 
     public Vector3 GetPosition(float t)
     {
@@ -30,7 +21,12 @@ public class Curve
 
     public Vector3 GetPosition(float t, Matrix4x4  localToWorldMatrix)
     {
-        return  localToWorldMatrix.MultiplyPoint3x4(GetPosition(t));
+        Quaternion rotation = Quaternion.Euler(0, _angle, 0);
+        Matrix4x4 rotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+        localToWorldMatrix = localToWorldMatrix * rotationMatrix;
+        Vector3 position = localToWorldMatrix.MultiplyPoint3x4(GetPosition(t));
+
+        return position;
     }
 
     public void DrawGizmo(Color c, Matrix4x4 localToWorldMatrix)
@@ -42,5 +38,10 @@ public class Curve
             Gizmos.DrawLine(lastPos, newPos);
             lastPos = newPos;
         }
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_a), 0.1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_b), 0.1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_c), 0.1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_d), 0.1f);
     }
 }

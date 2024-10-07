@@ -9,6 +9,7 @@ public class FreeFollowView : AView
     private GameObject _target;
     [SerializeField] private Curve _curve;
     private float _curvePosition;
+    private float _curveRotation;
     private float _curveSpeed = 0.2f;
     public GameObject Target;
 
@@ -19,17 +20,14 @@ public class FreeFollowView : AView
     public float GetPitch(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length - 1; i++)
-        {
+
+        for (int i = 0; i < _value.Length - 1; i++) {
             float a = _value[i].x;
             float b = _value[(i + 1)].x;
-            Debug.Log($"t: {t}");
-            if ((i == 0 || t >= (float)i / (_value.Length - 1))  && t <= ((float)i + 1f) / (_value.Length - 1))
-            {
+            if ((i == 0 || t >= (float)i / (_value.Length - 1))  && t <= ((float)i + 1f) / (_value.Length - 1)) {
                 result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
-
         return result;
 
     }
@@ -42,16 +40,14 @@ public class FreeFollowView : AView
     public float GetRoll(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length - 1; i++)
-        {
+        
+        for (int i = 0; i < _value.Length - 1; i++) {
             float a = _value[i].y;
             float b = _value[(i + 1)].y;
-            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1))
-            {
+            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1)) {
                 result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
-
         return result;
     }
 
@@ -63,12 +59,11 @@ public class FreeFollowView : AView
     public float GetFov(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length - 1; i++)
-        {
+
+        for (int i = 0; i < _value.Length - 1; i++) {
             float a = _value[i].z;
             float b = _value[(i + 1)].z;
-            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1))
-            {
+            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1)) {
                 result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
@@ -93,15 +88,19 @@ public class FreeFollowView : AView
 
     private void Update()
     {
-        if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-        {
+        if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) {
             _curvePosition += _curveSpeed * Time.deltaTime;
-        }else if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-        {
+        } else if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) {
             _curvePosition -= _curveSpeed * Time.deltaTime;
         }
-
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
+            _curveRotation -= _curveSpeed * Time.deltaTime;
+        } else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
+            _curveRotation += _curveSpeed * Time.deltaTime;
+        }
         _curvePosition = Mathf.Clamp01(_curvePosition);
+        _curveRotation = Mathf.Clamp01(_curveRotation);
+        _curve.Angle = _curveRotation * 360f;
     }
     
     public override CameraConfiguration GetConfiguration()
