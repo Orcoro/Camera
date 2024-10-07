@@ -7,10 +7,10 @@ using UnityEngine;
 public class Curve
 {
     private List<Vector3> _points = new List<Vector3>();
-    private Vector3 _a;
-    private Vector3 _b;
-    private Vector3 _c;
-    private Vector3 _d;
+    [SerializeField] private Vector3 _a;
+    [SerializeField] private Vector3 _b;
+    [SerializeField] private Vector3 _c;
+    [SerializeField] private Vector3 _d;
 
     public void AddPoint(Vector3 point)
     {

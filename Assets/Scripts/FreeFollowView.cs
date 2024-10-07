@@ -3,30 +3,76 @@ using UnityEngine;
 public class FreeFollowView : AView
 {
     private Vector3 _rotation;
-    private Vector3[] _value = new Vector3[3];
-    private float _yaw = 0f;
+    [SerializeField] private Vector3[] _value = new Vector3[3];
+    private float _yaw = 60f;
     private float _yawSpeed = 0.5f;
     private GameObject _target;
-    private Curve curve;
-    private Vector3 _curvePosition;
-    private float _curveSpeed;
-    private float _fieldOfView;
-
+    [SerializeField] private Curve _curve;
+    private float _curvePosition;
+    private float _curveSpeed = 0.2f;
     public GameObject Target;
 
     public float GetPitch(PositionType positionType)
     {
         return _value[(int)positionType].x;
     }
-
-    public float GetFov(PositionType positionType)
+    public float GetPitch(float t)
     {
-        return _value[(int)positionType].y;
+        float result = 0f;
+        for (int i = 0; i < _value.Length; i++)
+        {
+            float a = _value[i].x;
+            float b = _value[(i + 1) % _value.Length].x;
+            if (t >= i / _value.Length && t < (i + 1) / _value.Length)
+            {
+                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+            }
+        }
+
+        return result;
+
     }
 
     public float GetRoll(PositionType positionType)
     {
+        return _value[(int)positionType].y;
+    }
+
+    public float GetRoll(float t)
+    {
+        float result = 0f;
+        for (int i = 0; i < _value.Length; i++)
+        {
+            float a = _value[i].y;
+            float b = _value[(i + 1) % _value.Length].y;
+            if (t >= i / _value.Length && t < (i + 1) / _value.Length)
+            {
+                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+            }
+        }
+
+        return result;
+    }
+
+    public float GetFov(PositionType positionType)
+    {
         return _value[(int)positionType].z;
+    }
+
+    public float GetFov(float t)
+    {
+        float result = 0f;
+        for (int i = 0; i < _value.Length; i++)
+        {
+            float a = _value[i].z;
+            float b = _value[(i + 1) % _value.Length].z;
+            if (t >= i / _value.Length && t <= (i + 1) / _value.Length)
+            {
+                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+            }
+        }
+
+        return result;
     }
 
     public void SetPitch(PositionType positionType, float pitch)
@@ -34,30 +80,47 @@ public class FreeFollowView : AView
         _value[(int)positionType].x = pitch;
     }
 
-    public void SetFov(PositionType positionType, float fov)
-    {
-        _value[(int)positionType].y = fov;
-    }
-
     public void SetRoll(PositionType positionType, float roll)
     {
-        _value[(int)positionType].z = roll;
+        _value[(int)positionType].y = roll;
     }
 
+    public void SetFov(PositionType positionType, float fov)
+    {
+        _value[(int)positionType].z = fov;
+    }
+
+    private void Update()
+    {
+        if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+        {
+            _curvePosition += _curveSpeed * Time.deltaTime;
+        }else if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
+        {
+            _curvePosition -= _curveSpeed * Time.deltaTime;
+        }
+
+        _curvePosition = Mathf.Clamp01(_curvePosition);
+    }
+    
     public override CameraConfiguration GetConfiguration()
     {
-        _rotation = transform.eulerAngles;
+        transform.position = _curve.GetPosition(_curvePosition, Target.transform.localToWorldMatrix);
         Vector3 direction = (Target.transform.position - transform.position).normalized;
-        float pitch = -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
-        float yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        _rotation = new Vector3(pitch, yaw, 0f);
+        _yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        _rotation = new Vector3(GetPitch(_curvePosition), _yaw, GetRoll(_curvePosition));
         return new CameraConfiguration
         {
             Position = transform.position,
             Rotation = _rotation,
             Offset = Vector3.zero,
-            FieldOfView = _fieldOfView
+            FieldOfView = GetFov(_curvePosition)
         };
+    }
+
+    void OnDrawGizmos()
+    {
+        _curve.DrawGizmo(Color.red, Target.transform.localToWorldMatrix);
     }
 
 }
