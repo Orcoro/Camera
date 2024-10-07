@@ -19,13 +19,14 @@ public class FreeFollowView : AView
     public float GetPitch(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length; i++)
+        for (int i = 0; i < _value.Length - 1; i++)
         {
             float a = _value[i].x;
-            float b = _value[(i + 1) % _value.Length].x;
-            if (t >= i / _value.Length && t < (i + 1) / _value.Length)
+            float b = _value[(i + 1)].x;
+            Debug.Log($"t: {t}");
+            if ((i == 0 || t >= (float)i / (_value.Length - 1))  && t <= ((float)i + 1f) / (_value.Length - 1))
             {
-                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+                result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
 
@@ -41,13 +42,13 @@ public class FreeFollowView : AView
     public float GetRoll(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length; i++)
+        for (int i = 0; i < _value.Length - 1; i++)
         {
             float a = _value[i].y;
-            float b = _value[(i + 1) % _value.Length].y;
-            if (t >= i / _value.Length && t < (i + 1) / _value.Length)
+            float b = _value[(i + 1)].y;
+            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1))
             {
-                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+                result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
 
@@ -62,13 +63,13 @@ public class FreeFollowView : AView
     public float GetFov(float t)
     {
         float result = 0f;
-        for (int i = 0; i < _value.Length; i++)
+        for (int i = 0; i < _value.Length - 1; i++)
         {
             float a = _value[i].z;
-            float b = _value[(i + 1) % _value.Length].z;
-            if (t >= i / _value.Length && t <= (i + 1) / _value.Length)
+            float b = _value[(i + 1)].z;
+            if ((i == 0 || t >= (float)i / (_value.Length - 1)) && t <= ((float)i + 1) / (_value.Length - 1))
             {
-                result = Mathf.Lerp(a, b, (t - i / _value.Length) * _value.Length);
+                result = Mathf.Lerp(a, b, (t - (float)i / (_value.Length - 1)) * (_value.Length - 1));
             }
         }
 

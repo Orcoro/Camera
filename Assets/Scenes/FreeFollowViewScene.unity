@@ -519,7 +519,7 @@ MonoBehaviour:
   IsActiveOnStart: 1
   _value:
   - {x: 0, y: 0, z: 90}
-  - {x: 0, y: 0, z: 90}
+  - {x: 0, y: 90, z: 90}
   - {x: 0, y: 0, z: 90}
   _curve:
     _a: {x: 1, y: -1, z: 0}
