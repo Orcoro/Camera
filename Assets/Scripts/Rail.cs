@@ -9,7 +9,7 @@ public class Rail : MonoBehaviour
     private List<Transform> _nodes = new List<Transform>();
     private DollyView _dollyView;
     private float _totalLength;
-    private Vector2 movement = Vector2.zero;
+    private Vector2 movement = new Vector2(0, 50);
     private Vector3 TargetPosition;
 
     public bool IsLooped;
@@ -59,21 +59,25 @@ public class Rail : MonoBehaviour
 
     private void ManualMovement()
     {
-        if (Input.GetKey(KeyCode.LeftArrow)) {
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
             movement.x = -1;
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
             movement.x = 1;
         }
-        if (Input.GetKey(KeyCode.UpArrow)) {
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) {
             movement.y += 1 * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.DownArrow)) {
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) {
             movement.y -= 1 * Time.deltaTime;
         }
         if (movement.x != 0) {
             _dollyView.Distance += movement.x * movement.y * Time.deltaTime;
-            _dollyView.transform.position = GetPosition(_dollyView.Distance);
+
+            if (_dollyView.Distance < 0) {
+                _dollyView.Distance = _totalLength;
+            }
+            _dollyView.transform.position = GetPosition(_dollyView.Distance % _totalLength);
         }
     }
 
