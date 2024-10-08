@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class SphereViewVolume : AViewVolume
 {
-    private GameObject _target;
-    private float _outerRadius;
-    private float _innerRadius;
+    [SerializeField] private GameObject _target;
+    [SerializeField] private float _outerRadius;
+    [SerializeField] private float _innerRadius;
     private float _distance;
 
     public GameObject Target { get => _target; }
