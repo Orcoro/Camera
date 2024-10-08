@@ -41,6 +41,10 @@ public class SphereViewVolume : AViewVolume
     private void OnGUI()
     {
         GUILayout.Label($"SphereViewVolume {_uID}");
+    }
+
+    private void OnDrawGizmos()
+    {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, _innerRadius);
         Gizmos.color = Color.red;
