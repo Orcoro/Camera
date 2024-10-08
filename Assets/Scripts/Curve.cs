@@ -39,9 +39,9 @@ public class Curve
             lastPos = newPos;
         }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_a), 0.1f);
-        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_b), 0.1f);
-        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_c), 0.1f);
-        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_d), 0.1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_a), 1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_b), 1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_c), 1f);
+        Gizmos.DrawSphere(localToWorldMatrix.MultiplyPoint3x4(_d), 1f);
     }
 }

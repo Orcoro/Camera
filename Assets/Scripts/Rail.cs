@@ -83,24 +83,21 @@ public class Rail : MonoBehaviour
 
     private void AutoMovement()
     {
-        float totalDistance = 0f;
-        int index = 0;
+        Vector3 point = Vector3.zero;
         for (int i = 0; i < _nodes.Count; i++) {
             if (i == _nodes.Count - 1 && !IsLooped) {
                 break;
             }
-            float distanceA = Vector3.Distance(_nodes[i].position, _dollyView.Target.transform.position);
-            float distanceB = Vector3.Distance(_nodes[(i + 1) % _nodes.Count].position, _dollyView.Target.transform.position);
-            if (distanceA + distanceB <= totalDistance || totalDistance == 0f) {
-                totalDistance = distanceA + distanceB;
-                index = i;
+            Vector3 temp  = MathUtils.GetNearestPointOnSegment(_nodes[i].position, _nodes[(i + 1) % _nodes.Count].position, _dollyView.Target.transform.position);
+            float distanceA = Vector3.Distance(_dollyView.Target.transform.position, temp);
+            float distanceB = Vector3.Distance(_dollyView.Target.transform.position, point);
+            if (i == 0 || distanceA < distanceB) {
+                point = temp;
                 _targetedIndex = i;
             }
         }
-        Vector3 point = MathUtils.GetNearestPointOnSegment(_nodes[index].position, _nodes[(index + 1) % _nodes.Count].position, _dollyView.Target.transform.position);
         TargetPosition = point;
-        float distance = GetDistanceOnRail(point);
-        _dollyView.Distance = distance;
+        _dollyView.Distance = GetDistanceOnRail(point);
         _dollyView.transform.position = GetPosition(_dollyView.Distance);
     }
 
@@ -110,21 +107,18 @@ public class Rail : MonoBehaviour
     }
 
     public float GetDistanceOnRail(Vector3 position)
-{
+    {
     float distance = 0;
     for (int i = 0; i < _nodes.Count; i++) {
         Transform node = _nodes[i];
         Transform nextNode = _nodes[(i + 1) % _nodes.Count];
-
         if (i == _nodes.Count - 1 && !IsLooped) {
             return distance + Vector3.Distance(node.position, position);
         }
-
         float segmentLength = Vector3.Distance(node.position, nextNode.position);
         if (IsPointOnSegment(node.position, nextNode.position, position)) {
             return distance + Vector3.Distance(node.position, position);
         }
-
         distance += segmentLength;
     }
     return distance;
