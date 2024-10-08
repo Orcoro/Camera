@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private CameraConfiguration _configuration;
     private CameraConfiguration _targetConfiguration;
     private List<AView> _activeViews = new List<AView>();
-    private float _speed = 1f;
+    [SerializeField] private float _speed = 1f;
 
     private void Awake()
     {
