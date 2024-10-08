@@ -56,9 +56,11 @@ public class ViewVolumeBlender : AViewVolume
             volume.View.SetActive(true);
         } else {
             _volumesPerViews[volume.View].Add(volume);
-            _activeViewVolumes.Add(volume);
         }
-        _totalWeight += volume.ComputeSelfWeight();
+        if (!_activeViewVolumes.Contains(volume)) {
+            _activeViewVolumes.Add(volume);
+            _totalWeight += volume.ComputeSelfWeight();
+        }
     }
 
     public void RemoveVolume(AViewVolume volume)
@@ -68,10 +70,11 @@ public class ViewVolumeBlender : AViewVolume
             if (_volumesPerViews[volume.View].Count == 0) {
                 _volumesPerViews.Remove(volume.View);
                 volume.View.SetActive(false);
-            } else {
-                _activeViewVolumes.Remove(volume);
             }
-            _totalWeight -= volume.ComputeSelfWeight();
+            if (_activeViewVolumes.Contains(volume)) {
+                _activeViewVolumes.Remove(volume);
+                _totalWeight -= volume.ComputeSelfWeight();
+            }
         }
     }
 }
