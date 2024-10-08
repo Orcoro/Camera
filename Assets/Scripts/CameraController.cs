@@ -86,6 +86,11 @@ public class CameraController : MonoBehaviour
         };
     }
 
+    public void SetConfiguration(CameraConfiguration configuration)
+    {
+        _targetConfiguration = configuration;
+    }
+
     public void AddView(AView view)
     {
         _activeViews.Add(view);

@@ -16,5 +16,13 @@ public abstract class AView : MonoBehaviour
 
     protected virtual void Init() { }
     public virtual CameraConfiguration GetConfiguration() { return new CameraConfiguration(); }
-    public void SetActive(bool isActive) => CameraController.Instance.AddView(this);
+    public void SetActive(bool isActive)
+    {
+        if (isActive) {
+            CameraController.Instance.AddView(this);
+        } else {
+            CameraController.Instance.RemoveView(this);
+        }
+    }
+
 }
