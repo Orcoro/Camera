@@ -110,21 +110,34 @@ public class Rail : MonoBehaviour
     }
 
     public float GetDistanceOnRail(Vector3 position)
-    {
-        float distance = 0;
-        for (int i = 0; i < _nodes.Count; i++) {
-            Transform node = _nodes[i];
-            if (i == _nodes.Count - 1 && !IsLooped) {
-                return distance + Vector3.Distance(node.position, position);
-            }
-            float length = Vector3.Distance(node.position, _nodes[(i + 1) % _nodes.Count].position);
-            if (Vector3.Distance(node.position, position) <= length && Vector3.Distance(_nodes[(i + 1) % _nodes.Count].position, position) <= length) {
-                return distance + Vector3.Distance(node.position, position);
-            }
-            distance += length;
+{
+    float distance = 0;
+    for (int i = 0; i < _nodes.Count; i++) {
+        Transform node = _nodes[i];
+        Transform nextNode = _nodes[(i + 1) % _nodes.Count];
+
+        if (i == _nodes.Count - 1 && !IsLooped) {
+            return distance + Vector3.Distance(node.position, position);
         }
-        return distance;
+
+        float segmentLength = Vector3.Distance(node.position, nextNode.position);
+        if (IsPointOnSegment(node.position, nextNode.position, position)) {
+            return distance + Vector3.Distance(node.position, position);
+        }
+
+        distance += segmentLength;
     }
+    return distance;
+}
+
+private bool IsPointOnSegment(Vector3 start, Vector3 end, Vector3 point)
+{
+    float segmentLength = Vector3.Distance(start, end);
+    float startToPoint = Vector3.Distance(start, point);
+    float endToPoint = Vector3.Distance(end, point);
+
+    return Mathf.Approximately(segmentLength, startToPoint + endToPoint);
+}
 
 
     public Vector3 GetPosition(float distance)

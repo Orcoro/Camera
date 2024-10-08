@@ -13,6 +13,8 @@ public class FreeFollowView : AView
     private float _curveSpeed = 0.2f;
     public GameObject Target;
 
+    public bool IsActive;
+
     public float GetPitch(PositionType positionType)
     {
         return _value[(int)positionType].x;
@@ -88,6 +90,10 @@ public class FreeFollowView : AView
 
     private void Update()
     {
+        if (!IsActive) {
+            return;
+        }
+
         if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) {
             _curvePosition += _curveSpeed * Time.deltaTime;
         } else if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) {
