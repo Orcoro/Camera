@@ -21,6 +21,11 @@ public class ViewVolumeBlender : AViewVolume
 
     private void Update()
     {
+        UpdateVolume();
+    }
+
+    public void UpdateVolume()
+    {
         if (_activeViewVolumes.Count == 0) {
             return;
         }

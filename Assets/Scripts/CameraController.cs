@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance;
     private const float _computeTimer = 10f;
     private float _timer = 0f;
-    public static CameraController Instance;
     public Camera Camera;
     [SerializeField] private CameraConfiguration _configuration;
     private CameraConfiguration _targetConfiguration;
     private List<AView> _activeViews = new List<AView>();
     [SerializeField] private float _speed = 1f;
+    private bool _isCutRequested = false;
 
     private void Awake()
     {
@@ -31,6 +32,13 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         _targetConfiguration = ComputeAverage();
+        if (_isCutRequested) {
+            _timer = 0f;
+            _isCutRequested = false;
+            _configuration = _targetConfiguration;
+            ApplyConfiguration();
+            return;
+        }
         if (_timer >= _computeTimer && _targetConfiguration.IsEqual(_configuration)) {
             _timer = 0f;
             ApplyConfiguration();
@@ -103,6 +111,11 @@ public class CameraController : MonoBehaviour
         _activeViews.Remove(view);
         _configuration = ComputeAverage();
         _targetConfiguration = ComputeAverage();
+    }
+
+    public void Cut()
+    {
+        _isCutRequested = true;
     }
 
     private void OnDrawGizmos()

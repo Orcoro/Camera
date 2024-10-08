@@ -7,6 +7,7 @@ public class AViewVolume : MonoBehaviour
     protected int _priority = 0;
     protected AView _view;
     protected bool _isActive = false;
+    protected bool _isCutOnSwitch = false;
 
     public int UID => _uID;
     public int Priority => _priority;
@@ -36,6 +37,10 @@ public class AViewVolume : MonoBehaviour
             ViewVolumeBlender.Instance.AddVolume(this);
         } else {
             ViewVolumeBlender.Instance.RemoveVolume(this);
-        } 
+        }
+        if (_isCutOnSwitch) {
+            ViewVolumeBlender.Instance.UpdateVolume();
+            CameraController.Instance.Cut();
+        }
     }
 }

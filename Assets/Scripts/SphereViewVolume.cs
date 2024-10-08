@@ -20,19 +20,30 @@ public class SphereViewVolume : AViewVolume
             return;
         }
         _distance = Vector3.Distance(_target.transform.position, transform.position);
-        if (_distance <= _innerRadius && !_isActive) {
+        if (_distance <= _outerRadius && !_isActive) {
             SetActive(true);
         } else if (_distance > _outerRadius && _isActive) {
             SetActive(false);
         }
     }
 
+    public override float ComputeSelfWeight()
+    {
+        if (_distance <= _innerRadius) {
+            return base.ComputeSelfWeight();
+        }
+        if (_distance >= _outerRadius) {
+            return 0;
+        }
+        return 1.0f - (_distance - _innerRadius) / (_outerRadius - _innerRadius);
+    }
+
     private void OnGUI()
     {
         GUILayout.Label($"SphereViewVolume {_uID}");
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _outerRadius);
-        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _innerRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _outerRadius);
     }
 }
