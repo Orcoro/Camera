@@ -18,7 +18,6 @@ public class TriggerViewVolume : AViewVolume
             _collider = gameObject.AddComponent<BoxCollider>();
         }
         _collider.isTrigger = true;
-        _target = CameraController.Instance.gameObject;
     } 
 
     private void OnTriggerEnter(Collider other)
