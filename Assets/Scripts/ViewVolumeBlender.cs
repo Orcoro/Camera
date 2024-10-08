@@ -29,7 +29,7 @@ public class ViewVolumeBlender : AViewVolume
         if (_activeViewVolumes.Count == 0) {
             return;
         }
-        _activeViewVolumes.Sort((a, b) => 
+        _activeViewVolumes.Sort((a, b) =>
         {
             int priorityComparison = a.Priority.CompareTo(b.Priority);
             if (priorityComparison == 0)
@@ -71,6 +71,7 @@ public class ViewVolumeBlender : AViewVolume
             } else {
                 _activeViewVolumes.Remove(volume);
             }
+            _totalWeight -= volume.ComputeSelfWeight();
         }
     }
 }

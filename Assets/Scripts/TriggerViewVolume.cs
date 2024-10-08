@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class TriggerViewVolume : AViewVolume
 {
-    private GameObject _target;
-    private string _tag;
-    private int _layer;
+    [SerializeField] private GameObject _target;
+    [SerializeField] private string _tag;
+    [SerializeField] private LayerMask _layer;
     private Collider _collider;
 
     protected override void Init()
