@@ -4,8 +4,8 @@ public class AViewVolume : MonoBehaviour
 {
     static private int _nextUID = 0;
     protected int _uID = 0;
-    protected int _priority = 0;
-    protected AView _view;
+    [SerializeField] protected int _priority = 0;
+    [SerializeField] protected AView _view;
     protected bool _isActive = false;
     protected bool _isCutOnSwitch = false;
 
