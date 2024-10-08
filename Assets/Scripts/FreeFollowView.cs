@@ -5,12 +5,12 @@ public class FreeFollowView : AView
     private Vector3 _rotation;
     [SerializeField] private Vector3[] _value = new Vector3[3];
     private float _yaw = 60f;
-    private float _yawSpeed = 0.5f;
+    [SerializeField] private float _yawSpeed = 0.5f;
     private GameObject _target;
     [SerializeField] private Curve _curve;
     private float _curvePosition;
     private float _curveRotation;
-    private float _curveSpeed = 0.2f;
+    [SerializeField] private float _curveSpeed = 0.2f;
     public GameObject Target;
 
     public bool IsActive;
@@ -100,9 +100,9 @@ public class FreeFollowView : AView
             _curvePosition -= _curveSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
-            _curveRotation -= _curveSpeed * Time.deltaTime;
+            _curveRotation -= _yawSpeed * Time.deltaTime;
         } else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
-            _curveRotation += _curveSpeed * Time.deltaTime;
+            _curveRotation += _yawSpeed * Time.deltaTime;
         }
         _curvePosition = Mathf.Clamp01(_curvePosition);
         _curveRotation = Mathf.Clamp01(_curveRotation);
