@@ -8,6 +8,7 @@ public class ViewVolumeBlender : AViewVolume
     public static ViewVolumeBlender Instance { get; private set; }
     private List<AViewVolume> _activeViewVolumes = new List<AViewVolume>();
     private Dictionary<AView, List<AViewVolume>> _volumesPerViews = new Dictionary<AView, List<AViewVolume>>();
+    private float _totalWeight = 0;
 
     protected override void Init()
     {
@@ -32,31 +33,27 @@ public class ViewVolumeBlender : AViewVolume
             }
             return priorityComparison;
         });
-        float totalWeight = 0.0f;
-        foreach (AViewVolume volume in _activeViewVolumes) {
-            totalWeight += volume.ComputeSelfWeight();
-            volume.View.Weight = 0f;
-        }
-        CameraConfiguration configuration = new CameraConfiguration();
         foreach (AViewVolume volume in _activeViewVolumes) {
             float weight = volume.ComputeSelfWeight();
-            CameraConfiguration volumeConfiguration = volume.View.GetConfiguration();
-            configuration.Position += volumeConfiguration.Position * weight / totalWeight;
-            configuration.Rotation += volumeConfiguration.Rotation * weight / totalWeight;
-            configuration.Offset += volumeConfiguration.Offset * weight / totalWeight;
-            configuration.FieldOfView += volumeConfiguration.FieldOfView * weight / totalWeight;
+            float remainingWeight = 1.0f - weight;
+            foreach (AView view in _volumesPerViews.Keys) {
+                view.Weight *= remainingWeight;
+            }
+            volume.View.Weight += weight;
         }
-        CameraController.Instance.SetConfiguration(configuration);
     }
 
     public void AddVolume(AViewVolume volume)
     {
         if (!_volumesPerViews.ContainsKey(volume.View)) {
             _volumesPerViews[volume.View] = new List<AViewVolume>();
+            volume.View.Weight = 0f;
             volume.View.SetActive(true);
+        } else {
+            _volumesPerViews[volume.View].Add(volume);
+            _activeViewVolumes.Add(volume);
         }
-        _volumesPerViews[volume.View].Add(volume);
-        _activeViewVolumes.Add(volume);
+        _totalWeight += volume.ComputeSelfWeight();
     }
 
     public void RemoveVolume(AViewVolume volume)
@@ -66,8 +63,9 @@ public class ViewVolumeBlender : AViewVolume
             if (_volumesPerViews[volume.View].Count == 0) {
                 _volumesPerViews.Remove(volume.View);
                 volume.View.SetActive(false);
+            } else {
+                _activeViewVolumes.Remove(volume);
             }
-            _activeViewVolumes.Remove(volume);
         }
     }
 }

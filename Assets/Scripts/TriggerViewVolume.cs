@@ -8,6 +8,18 @@ public class TriggerViewVolume : AViewVolume
     private GameObject _target;
     private string _tag;
     private int _layer;
+    private Collider _collider;
+
+    protected override void Init()
+    {
+        _collider = GetComponent<Collider>();
+        if (_collider == null) {
+            Debug.LogWarning("TriggerViewVolume must have a Collider component");
+            _collider = gameObject.AddComponent<BoxCollider>();
+        }
+        _collider.isTrigger = true;
+        _target = CameraController.Instance.gameObject;
+    } 
 
     private void OnTriggerEnter(Collider other)
     {
