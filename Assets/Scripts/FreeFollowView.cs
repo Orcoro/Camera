@@ -6,6 +6,7 @@ public class FreeFollowView : AView
     [SerializeField] private Vector3[] _value = new Vector3[3];
     private float _yaw = 60f;
     [SerializeField] private float _yawSpeed = 0.5f;
+    [SerializeField] private float _mouseSensitivity = 2f;
     private GameObject _target;
     [SerializeField] private Curve _curve;
     private float _curvePosition;
@@ -88,12 +89,7 @@ public class FreeFollowView : AView
         _value[(int)positionType].z = fov;
     }
 
-    private void Update()
-    {
-        if (!IsActive) {
-            return;
-        }
-
+    private void InputKeys(){
         if(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) {
             _curvePosition += _curveSpeed * Time.deltaTime;
         } else if(Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) {
@@ -104,6 +100,29 @@ public class FreeFollowView : AView
         } else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
             _curveRotation += _yawSpeed * Time.deltaTime;
         }
+    }private void InputMouse(){
+        
+        var mouseX = Input.GetAxis("Mouse X");
+        var mouseY = Input.GetAxis("Mouse Y");
+        if(mouseY > 0) {
+            _curvePosition += _curveSpeed * Time.deltaTime * _mouseSensitivity;
+        } else if(mouseY < 0) {
+            _curvePosition -= _curveSpeed * Time.deltaTime * _mouseSensitivity;
+        }
+        if(mouseX < 0) {
+            _curveRotation -= _curveSpeed * Time.deltaTime * _mouseSensitivity;
+        } else if(mouseX > 0) {
+            _curveRotation += _curveSpeed * Time.deltaTime * _mouseSensitivity;
+        }
+    }
+
+    private void Update()
+    {
+        if (IsActive) {
+            InputKeys();
+        }
+
+        
         _curvePosition = Mathf.Clamp01(_curvePosition);
         _curveRotation = Mathf.Clamp01(_curveRotation);
         _curve.Angle = _curveRotation * 360f;

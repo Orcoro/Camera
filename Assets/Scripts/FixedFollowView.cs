@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class FixedFollowView : AView
 {
-    private float _yawOffsetMax = 45f;
-    private float _pitchOffsetMax = 45f;
+    [SerializeField] private float _yawOffsetMax = 45f;
+    [SerializeField] private float _pitchOffsetMax = 45f;
     private Vector3 _rotation;
     public float FieldOfView;
     public GameObject Target;

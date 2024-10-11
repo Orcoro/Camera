@@ -11,10 +11,18 @@ public class PlayerController : MonoBehaviour
 		FreeFollowView
 	}
 	private MovementType _movementType = MovementType.Manual;
-	public float speed = 10.0f;
+	
 
 	Rigidbody _rigidbody = null;
 	protected bool IsActive { get; private set; }
+	
+	public enum CONTROLS
+    {
+        WORLD,
+        CAMERA,
+    }
+    public CONTROLS controls = CONTROLS.CAMERA;
+	public float speed = 10.0f;
 
 	[Header("Views")]
 	[SerializeField] private FreeFollowView _freeFollowView;
@@ -23,6 +31,8 @@ public class PlayerController : MonoBehaviour
 	public void Awake()
 	{
 		_rigidbody = GetComponent<Rigidbody>();
+		Cursor.visible = false; 
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 
 	void Update()
@@ -67,31 +77,28 @@ public class PlayerController : MonoBehaviour
 
     private void ManualMovement()
     {
-        //reading the input:
-		float horizontalAxis = Input.GetAxis("Horizontal");
-		float verticalAxis = Input.GetAxis("Vertical");
-		 
-		//assuming we only using the single camera:
-		var camera = Camera.main;
+        Vector3 direction = Vector3.zero;
+        Vector3 forward = Vector3.forward;
+        Vector3 right = Vector3.right;
 
-		//camera forward and right vectors:
-		var forward = camera.transform.forward;
-		var right = camera.transform.right;
+        switch (controls)
+        {
+            case CONTROLS.CAMERA:
+                forward = Camera.main.transform.forward;
+                forward.y = 0;
+                forward.Normalize();
 
-		//project forward and right vectors on the horizontal plane (y = 0)
-		forward.y = 0f;
-		right.y = 0f;
-		forward.Normalize();
-		right.Normalize();
+                right = Camera.main.transform.right;
+                right.y = 0;
+                right.Normalize();
 
-		//this is the direction in the world space we want to move:
-		var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
+                break;
+        }
+        direction += Input.GetAxisRaw("Horizontal") * right;
+        direction += Input.GetAxisRaw("Vertical") * forward;
+        direction.Normalize();
+        _rigidbody.velocity = direction * speed + Vector3.up * _rigidbody.velocity.y;
 
-		//now we can apply the movement using the rigidbody:
-		if (_rigidbody != null)
-		{
-			_rigidbody.MovePosition(_rigidbody.position + desiredMoveDirection * speed * Time.deltaTime);
-		}
     }
 
     public void ChangeMovementType(MovementType movementType)
